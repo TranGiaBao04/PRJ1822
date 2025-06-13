@@ -158,7 +158,7 @@ public class ProductController extends HttpServlet {
 
     private String handleProductSearching(HttpServletRequest request, HttpServletResponse response) {
         String keyword = request.getParameter("keyword");
-        List<ProductDTO> list = pdao.getProductsByName(keyword);
+        List<ProductDTO> list = pdao.getActiveProductsByName(keyword);
         request.setAttribute("list", list);
         request.setAttribute("keyword", keyword);
         return "Welcome.jsp";

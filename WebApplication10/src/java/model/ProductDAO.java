@@ -313,7 +313,7 @@ public class ProductDAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         
-        String query = GET_ALL_PRODUCTS + " WHERE name like ? AND status = 1";
+        String query = GET_ALL_PRODUCTS + " WHERE name like ? AND status=1";
         
         try{
             conn = DbUtils.getConnection();
