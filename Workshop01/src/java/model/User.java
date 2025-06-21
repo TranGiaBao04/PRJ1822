@@ -9,8 +9,8 @@ package model;
  * @author Admin
  */
 public class User {
-    private String userId;
-    private String fullname;
+    private String username;
+    private String name;
     private String password;
     private String role;
     
@@ -18,27 +18,29 @@ public class User {
         
     }
     
-    public User(String Username, String Name, String Password, String Role){
-        this.userId = userId;
-        this.fullname = fullname;
+    public User(String username, String name, String password, String role){
+        this.username = username;
+        this.name = name;
         this.password = password;
         this.role = role;
+        
+        
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getName() {
+        return name;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPassword() {
@@ -56,6 +58,8 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+    
 
     
     

@@ -1,12 +1,13 @@
 <%-- 
-    Document   : Login
-    Created on : May 23, 2025, 9:50:31 AM
-    Author     : Admin
+    Document   : login
+    Created on : May 23, 2025, 9:50:21 AM
+    Author     : tungi
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="model.UserDTO" %>
-<%@page import="utils.AuthUtils" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,22 +15,21 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <%
-            if(AuthUtils.isLoggedIn(request)){
-                response.sendRedirect("Welcome.jsp");
-            }else{
-
-                Object objMS = request.getAttribute("message");
-                String msg = (objMS==null)?"":(objMS+"");
-            %>
-        <form action="MainController" method="get">
-            <input type="hidden" name="action" value="login"/>
-            UserID: <input type="text" name="strUserID" /> <br/>    
-            Password: <input type="password" name="strPassword"/> <br/>
-            <input type="submit" value="Login"/>
-        </form>
-        <span style="color: red"><%=msg%></span>
-        
-        <%}%>
+        <c:choose>
+            <c:when test="${not empty sessionScope.user}">
+                <c:redirect url="Welcome.jsp"/>
+            </c:when>
+            <c:otherwise>
+                <form action="MainController" method="post">
+                    <input type="hidden" name="action" value="login"/>
+                    UserID : <input type="text" name="strUserID" /> <br/> 
+                    Password : <input type="password" name="strPassword" /> </br>
+                    <input type="submit" value="Login"/>
+                </form>
+                <c:if test="${not empty requestScope.message}">
+                    <span style="color: red">${requestScope.message}</span>
+                </c:if>
+            </c:otherwise>
+        </c:choose>
     </body>
 </html>
