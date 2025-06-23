@@ -22,20 +22,20 @@ import model.User;
 @WebServlet(name = "UserController", urlPatterns = {"/UserController"})
 public class UserController extends HttpServlet {
 
-    private static final String WELCOME_PAGE ="welcome.jsp";
     private static final String LOGIN_PAGE = "login.jsp";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = LOGIN_PAGE;
         try {
             String action = request.getParameter("action");
-            if("login".equals(action)){
+            if ("login".equals(action)) {
                 url = handleLogin(request, response);
-            }else if("logout".equals("action")){
+            } else if ("logout".equals(action)) {
                 url = handleLogout(request, response);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
@@ -81,29 +81,44 @@ public class UserController extends HttpServlet {
     }// </editor-fold>
 
     private String handleLogin(HttpServletRequest request, HttpServletResponse response) {
-        String url = null;
-        HttpSession session = request.getSession();
-        String username = request.getParameter("strUsername");
-        String password = request.getParameter("strPassword");
-        UserDAO userDAO = new UserDAO();
-        if(userDAO.login(username, password)){
-            url = "welcome.jsp";
-            User user = userDAO.getUserByNameId(username);
-            session.setAttribute("user", user);
-        }else{
-            url = "login.jsp";
-            request.setAttribute("message", "UserID or Password incorrect!");
+        String url = "login.jsp"; // default về login page
+
+        try {
+            String username = request.getParameter("strUsername");
+            String password = request.getParameter("strPassword");
+
+            // Validate input
+            if (username == null || username.trim().isEmpty()
+                    || password == null || password.trim().isEmpty()) {
+                request.setAttribute("message", "Please enter both username and password!");
+                return url;
+            }
+
+            // Gọi checkLogin - trả về User nếu thành công, null nếu thất bại
+            User user = UserDAO.checkLogin(username.trim(), password);
+
+            if (user != null) {
+                // Login thành công
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+                url = "dashboard.jsp";
+            } else {
+                // Login thất bại
+                request.setAttribute("message", "UserID or Password incorrect!");
+            }
+
+        } catch (Exception e) {
+            request.setAttribute("message", "System error. Please try again!");
+            System.out.println("Login error: " + e.getMessage());
         }
+
         return url;
     }
 
     private String handleLogout(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        if(session!=null){
-            User user = (User) session.getAttribute("user");
-            if(user!=null){
-                session.invalidate();
-            }
+        HttpSession session = request.getSession(false); // false = không tạo session mới
+        if (session != null) {
+            session.invalidate(); // Xóa toàn bộ session
         }
         return LOGIN_PAGE;
     }
