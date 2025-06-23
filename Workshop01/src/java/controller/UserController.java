@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
+import utils.PasswordUtils;
 
 /**
  *
@@ -86,6 +87,7 @@ public class UserController extends HttpServlet {
         try {
             String username = request.getParameter("strUsername");
             String password = request.getParameter("strPassword");
+            password = PasswordUtils.encryptSHA256(password);
 
             // Validate input
             if (username == null || username.trim().isEmpty()

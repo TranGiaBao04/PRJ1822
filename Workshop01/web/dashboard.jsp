@@ -42,7 +42,7 @@
                     <input type="text" name="searchTerm" placeholder="Search project by name...">
                     <input type="submit" value="Search">
                 </form>
-                <a href="create.jsp" class="create-btn">+ Create Project</a>
+                <a href="create.jsp" class="create-btn"> Create Project</a>
             </div>
 
             <!-- Project table -->

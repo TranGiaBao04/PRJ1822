@@ -18,7 +18,7 @@
     </head>
     <body>
         <div class="container">
-            <a href="javascript:history.back()" class="back-btn">← Back</a>
+            <a href="javascript:history.back()" class="back-btn"> Back</a>
 
             <h2>Startup Project</h2>
 

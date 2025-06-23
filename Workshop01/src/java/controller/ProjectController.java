@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import model.StartupProject;
+import utils.AuthUtils;
 
 /**
  *
@@ -36,38 +37,48 @@ public class ProjectController extends HttpServlet {
         StartupProjectDAO spDAO = new StartupProjectDAO();
 
         try {
-            if ("create".equals(action)) {
-                url = validateProject(request, response, action);
-            } else if ("search".equals(action)) {
-                String searchTerm = request.getParameter("searchTerm");
-                if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-                    List<StartupProject> list = spDAO.search(searchTerm.trim());
-                    request.setAttribute("projectSearch", list);
-                    request.setAttribute("searchTerm", searchTerm);
-                    System.out.println("Search results: " + list.size() + " projects found");
-                } else {
-                    // Nếu search term rỗng, hiển thị tất cả
-                    List<StartupProject> list = spDAO.readAll();
-                    request.setAttribute("projectSearch", list);
-                    request.setAttribute("message", "Please enter search term");
-                }
-                url = DASHBOARD_PAGE;
-            } else if ("updateGetPage".equals(action)) {
-                int projectId = Integer.parseInt(request.getParameter("projectId"));
-                StartupProject sp = spDAO.searchId(projectId);
-                if (sp != null) {
-                    request.setAttribute("startupProject", sp);
-                    url = CREATE_PAGE;
-                } else {
-                    request.setAttribute("error", "Project not found");
-                    url = DASHBOARD_PAGE;
-                }
-            } else if ("update".equals(action)) {
-                url = validateProject(request, response, action);
-            } else {
-                // Default: show all projects
+            // Kiểm tra quyền truy cập - chỉ Founder mới được thực hiện các thao tác với project
+            if (!AuthUtils.isFounder(request)) {
+                request.setAttribute("error", AuthUtils.getAccessDeniedMessage(" manage projects"));
+                // Vẫn hiển thị danh sách project cho TeamMember xem (chỉ xem, không thao tác)
                 List<StartupProject> list = spDAO.readAll();
-                request.setAttribute("projectSearch", list);
+                request.setAttribute("projects", list);
+                url = DASHBOARD_PAGE;
+            } else {
+                // Chỉ Founder mới được thực hiện các thao tác này
+                if ("create".equals(action)) {
+                    url = validateProject(request, response, action);
+                } else if ("search".equals(action)) {
+                    String searchTerm = request.getParameter("searchTerm");
+                    if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+                        List<StartupProject> list = spDAO.search(searchTerm.trim());
+                        request.setAttribute("projectSearch", list);
+                        request.setAttribute("searchTerm", searchTerm);
+                        System.out.println("Search results: " + list.size() + " projects found");
+                    } else {
+                        // Nếu search term rỗng, hiển thị tất cả
+                        List<StartupProject> list = spDAO.readAll();
+                        request.setAttribute("projectSearch", list);
+                        request.setAttribute("message", "Please enter search term");
+                    }
+                    url = DASHBOARD_PAGE;
+                } else if ("updateGetPage".equals(action)) {
+                    int projectId = Integer.parseInt(request.getParameter("projectId"));
+                    StartupProject sp = spDAO.searchId(projectId);
+                    if (sp != null) {
+                        request.setAttribute("startupProject", sp);
+                        url = CREATE_PAGE;
+                    } else {
+                        request.setAttribute("error", "Project not found");
+                        url = DASHBOARD_PAGE;
+                    }
+                } else if ("update".equals(action)) {
+                    url = validateProject(request, response, action);
+                } else {
+                    // Default: show all projects
+                    List<StartupProject> list = spDAO.readAll();
+                    request.setAttribute("projects", list);
+                }
             }
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Invalid project ID");
