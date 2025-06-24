@@ -34,11 +34,11 @@ public class AuthUtils {
     }
     
     public static boolean isFounder(HttpServletRequest request){
-        return hasRole(request,"FD");
+        return hasRole(request,"Founder");
     }
     
     public static boolean isTeamMember(HttpServletRequest request){
-        return hasRole(request,"TM");
+        return hasRole(request,"Team Member");
     }
     
     public static String getLoginURL(){
@@ -46,6 +46,6 @@ public class AuthUtils {
     }
     
     public static String getAccessDeniedMessage(String action){
-        return "You can not access to"+action+".Please contact founder.";
+        return "You can not access to " +action+ ".Please contact founder.";
     }
 }

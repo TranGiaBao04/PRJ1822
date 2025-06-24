@@ -37,55 +37,59 @@ public class ProjectController extends HttpServlet {
         StartupProjectDAO spDAO = new StartupProjectDAO();
 
         try {
-            // Kiểm tra quyền truy cập - chỉ Founder mới được thực hiện các thao tác với project
-            if (!AuthUtils.isFounder(request)) {
-                request.setAttribute("error", AuthUtils.getAccessDeniedMessage(" manage projects"));
-                // Vẫn hiển thị danh sách project cho TeamMember xem (chỉ xem, không thao tác)
-                List<StartupProject> list = spDAO.readAll();
-                request.setAttribute("projects", list);
-                url = DASHBOARD_PAGE;
-            } else {
-                // Chỉ Founder mới được thực hiện các thao tác này
-                if ("create".equals(action)) {
-                    url = validateProject(request, response, action);
-                } else if ("search".equals(action)) {
-                    String searchTerm = request.getParameter("searchTerm");
-                    if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-                        List<StartupProject> list = spDAO.search(searchTerm.trim());
-                        request.setAttribute("projectSearch", list);
-                        request.setAttribute("searchTerm", searchTerm);
-                        System.out.println("Search results: " + list.size() + " projects found");
-                    } else {
-                        // Nếu search term rỗng, hiển thị tất cả
-                        List<StartupProject> list = spDAO.readAll();
-                        request.setAttribute("projectSearch", list);
-                        request.setAttribute("message", "Please enter search term");
-                    }
-                    url = DASHBOARD_PAGE;
-                } else if ("updateGetPage".equals(action)) {
-                    int projectId = Integer.parseInt(request.getParameter("projectId"));
-                    StartupProject sp = spDAO.searchId(projectId);
-                    if (sp != null) {
-                        request.setAttribute("startupProject", sp);
-                        url = CREATE_PAGE;
-                    } else {
-                        request.setAttribute("error", "Project not found");
-                        url = DASHBOARD_PAGE;
-                    }
-                } else if ("update".equals(action)) {
-                    url = validateProject(request, response, action);
+            if ("search".equals(action)) {
+                // Cả Founder và Team Member đều có thể search
+                String searchTerm = request.getParameter("searchTerm");
+                if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+                    List<StartupProject> list = spDAO.search(searchTerm.trim());
+                    request.setAttribute("projectSearch", list);
+                    request.setAttribute("searchTerm", searchTerm);
+                    System.out.println("Search results: " + list.size() + " projects found");
                 } else {
-                    // Default: show all projects
+                    // Nếu search term rỗng, hiển thị tất cả
+                    List<StartupProject> list = spDAO.readAll();
+                    request.setAttribute("projectSearch", list);
+                    request.setAttribute("message", "Please enter search term");
+                }
+                url = DASHBOARD_PAGE;
+
+            } else if ("create".equals(action) || "updateGetPage".equals(action) || "update".equals(action)) {
+                // Chỉ Founder mới được thực hiện các thao tác create, update
+                if (!AuthUtils.isFounder(request)) {
+                    request.setAttribute("error", AuthUtils.getAccessDeniedMessage(" manage projects"));
+                    // Hiển thị danh sách project cho Team Member xem
                     List<StartupProject> list = spDAO.readAll();
                     request.setAttribute("projects", list);
+                    url = DASHBOARD_PAGE;
+                } else {
+                    // Xử lý các action dành cho Founder
+                    if ("create".equals(action)) {
+                        url = validateProject(request, response, action);
+                    } else if ("updateGetPage".equals(action)) {
+                        int projectId = Integer.parseInt(request.getParameter("projectId"));
+                        StartupProject sp = spDAO.searchId(projectId);
+                        if (sp != null) {
+                            request.setAttribute("startupProject", sp);
+                            url = CREATE_PAGE;
+                        } else {
+                            request.setAttribute("error", "Project not found");
+                            url = DASHBOARD_PAGE;
+                        }
+                    } else if ("update".equals(action)) {
+                        url = validateProject(request, response, action);
+                    }
                 }
+            } else {
+                // Default: show all projects (cả Founder và Team Member đều xem được)
+                List<StartupProject> list = spDAO.readAll();
+                request.setAttribute("projects", list);
             }
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Invalid project ID");
             url = DASHBOARD_PAGE;
         } catch (Exception e) {
             request.setAttribute("error", "Failed to process request: " + e.getMessage());
-            e.printStackTrace(); // For debugging
+            e.printStackTrace();
             url = DASHBOARD_PAGE;
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
