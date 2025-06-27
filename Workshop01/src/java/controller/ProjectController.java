@@ -159,8 +159,8 @@ public class ProjectController extends HttpServlet {
     }
 
     private boolean validateName(HttpServletRequest request, String name) {
-        if (name == null || name.trim().length() < 3 || name.trim().length() > 100) {
-            request.setAttribute("errorName", "Project name must be between 3 and 100 characters.");
+        if (name == null || name.trim().length() < 5 || name.trim().length() > 50) {
+            request.setAttribute("errorName", "Project name must be between 5 and 50 characters.");
             return false;
         }
         return true;

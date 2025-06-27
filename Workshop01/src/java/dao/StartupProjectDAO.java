@@ -102,7 +102,7 @@ public class StartupProjectDAO {
         } finally {
             closeResources(conn, ps, rs);
         }
-        return projectid + 1;
+        return projectid + 1; //Trả về ID mới = lớn nhất + 1
     }
 
     public boolean update(StartupProject project) {

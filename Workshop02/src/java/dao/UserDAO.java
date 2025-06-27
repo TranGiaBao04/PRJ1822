@@ -22,33 +22,34 @@ public class UserDAO {
         
     }
     
-    public static User checkLogin(String username, String password) {
+    public static User checkLogin(String username, String password){
         User us = null;
+        String sql = "SELECT * FROM tblUsers WHERE username = ? AND password = ?";
         try {
-            String sql = "SELECT * FROM tblUsers WHERE Username = ? AND Password = ? ";
             Connection conn = DbUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {        
+            
+            if(rs.next()){
                 User user = new User();
-                user.setUsername(rs.getString("Username"));
-                user.setName(rs.getString("Name"));
-                user.setPassword(rs.getString("PassWord"));
-                user.setRole(rs.getString("Role"));
+                user.setUsername(rs.getString("username"));
+                user.setName(rs.getString("name"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(rs.getString("role"));
                 return user;
-
             }
+            
         } catch (Exception e) {
-            System.out.println("Login error: " + e.getMessage());
-        }
-        return null;
+            System.out.println("Login error:" +e.getMessage());
+        }        
+        return us;
     }
     
     public List<User> getAllUsers(){
-        List<User> userList = new ArrayList<>();
-        String sql = "SELECT Username, Name, Password, Role FROM tblUsers ORDER BY UserName";
+        List<User> userlist = new ArrayList<>();
+        String sql = "SELECT username, name, password, role FROM tblUsers ORDER BY username";
         try{
             Connection conn = DbUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -56,28 +57,29 @@ public class UserDAO {
             
             while(rs.next()){
                 User us = new User();
-                us.setUsername(rs.getString("Username"));
-                us.setName(rs.getString("Name"));
-                us.setPassword(rs.getString("Password"));
-                us.setRole(rs.getString("Role"));
-                userList.add(us);
+                us.setUsername(rs.getString("username"));
+                us.setName(rs.getString("name"));
+                us.setPassword(rs.getString("password"));
+                us.setRole(rs.getString("role"));
+                userlist.add(us);
             }
         }catch (Exception e) {
             e.printStackTrace();
         }
-        return userList;
+        
+        return userlist;
     }
     
-    public boolean updatePassword(String userID, String newPassword) {
-        String sql = "UPDATE tblUsers SET Password = ? WHERE Username = ?";
-        try {
+    public boolean updatePassword(String userId, String newPass){
+        String sql = "UPDATE tblUsers SET password = ? WHERE username = ?";
+        try{
             Connection conn = DbUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, newPassword);
-            ps.setString(2, userID);
+            ps.setString(1, newPass);
+            ps.setString(2, userId);
             int result = ps.executeUpdate();
             return result > 0;
-        } catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace();
             return false;
         }
