@@ -1,14 +1,13 @@
-﻿-- Tạo database cho hệ thống quản lý thi trắc nghiệm
--- Database Design for Exam Management System - SQL Server
-
--- Tạo database
+﻿drop database ExamManagementSystem;
+use master
+-- Create database
 CREATE DATABASE ExamManagementSystem;
 GO
 
 USE ExamManagementSystem;
 GO
 
--- 1. Bảng người dùng (Users Table)
+-- 1. Users Table
 CREATE TABLE tblUsers (
     username VARCHAR(50) PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
@@ -16,16 +15,16 @@ CREATE TABLE tblUsers (
     Role VARCHAR(20) NOT NULL CHECK (Role IN ('Instructor', 'Student'))
 );
 
--- 2. Bảng danh mục kỳ thi (Exam Categories Table)
+-- 2. Exam Categories Table
 CREATE TABLE tblExamCategories (
-    category_id INT IDENTITY(1,1) PRIMARY KEY,
+    category_id INT PRIMARY KEY,
     category_name VARCHAR(50) NOT NULL,
-    description NTEXT
+    description TEXT
 );
 
--- 3. Bảng kỳ thi (Exams Table)
+-- 3. Exams Table
 CREATE TABLE tblExams (
-    exam_id INT IDENTITY(1,1) PRIMARY KEY,
+    exam_id INT PRIMARY KEY,
     exam_title VARCHAR(100) NOT NULL,
     Subject VARCHAR(50) NOT NULL,
     category_id INT NOT NULL,
@@ -35,9 +34,9 @@ CREATE TABLE tblExams (
         ON DELETE NO ACTION ON UPDATE CASCADE
 );
 
--- 4. Bảng câu hỏi (Questions Table)
+-- 4. Questions Table
 CREATE TABLE tblQuestions (
-    question_id INT IDENTITY(1,1) PRIMARY KEY,
+    question_id INT PRIMARY KEY,
     exam_id INT NOT NULL,
     question_text NTEXT NOT NULL,
     option_a VARCHAR(100) NOT NULL,
@@ -49,48 +48,46 @@ CREATE TABLE tblQuestions (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Thêm dữ liệu mẫu
 -- Insert sample data
 
--- Thêm danh mục kỳ thi
-INSERT INTO tblExamCategories (category_name, description) VALUES
-('Quiz', N'Kiểm tra ngắn hàng tuần'),
-('Midterm', N'Kỳ thi giữa kỳ'),
-('Final', N'Kỳ thi cuối kỳ'),
-('Assignment', N'Bài tập đánh giá');
+-- Insert exam categories
+INSERT INTO tblExamCategories (category_id, category_name, description) VALUES
+(1, 'Quiz', 'Weekly short quizzes'),
+(2, 'Midterm', 'Midterm examinations'),
+(3, 'Final', 'Final examinations'),
+(4, 'Assignment', 'Evaluation assignments');
 
--- Thêm người dùng
+-- Insert users
 INSERT INTO tblUsers (username, Name, password, Role) VALUES
-('instructor1', N'Nguyễn Văn A', 'inst1', 'Instructor'),
-('instructor2', N'Trần Thị B', 'inst2', 'Instructor'),
-('student1', N'Lê Văn C', 'stu1', 'Student'),
-('student2', N'Phạm Thị D', 'stu2', 'Student'),
-('student3', N'Hoàng Văn E', 'stu3', 'Student');
+('instructor1', 'Nguyen Van A', 'inst1', 'Instructor'),
+('instructor2', 'Tran Thi B', 'inst2', 'Instructor'),
+('student1', 'Le Van C', 'stu1', 'Student'),
+('student2', 'Pham Thi D', 'stu2', 'Student'),
+('student3', 'Hoang Van E', 'stu3', 'Student');
 
-delete from tblUsers;
+-- Insert exams
+INSERT INTO tblExams (exam_id, exam_title, Subject, category_id, total_marks, Duration) VALUES
+(1, 'Math Quiz Week 1', 'Mathematics', 1, 20, 30),
+(2, 'Midterm Physics Exam', 'Physics', 2, 50, 90),
+(3, 'Final Chemistry Exam', 'Chemistry', 3, 100, 120),
+(4, 'English Quiz', 'English', 1, 25, 45);
 
--- Thêm kỳ thi
-INSERT INTO tblExams (exam_title, Subject, category_id, total_marks, Duration) VALUES
-(N'Kiểm tra Toán học tuần 1', N'Toán học', 1, 20, 30),
-(N'Thi giữa kỳ Vật lý', N'Vật lý', 2, 50, 90),
-(N'Thi cuối kỳ Hóa học', N'Hóa học', 3, 100, 120),
-(N'Quiz Tiếng Anh', N'Tiếng Anh', 1, 25, 45);
+-- Insert sample questions
+INSERT INTO tblQuestions (question_id, exam_id, question_text, option_a, option_b, option_c, option_d, correct_option) VALUES
+-- Questions for Math Exam
+(1, 1, 'What is the result of 2 + 3 × 4?', '20', '14', '11', '24', 'B'),
+(2, 1, 'What is the square root of 16?', '2', '4', '6', '8', 'B'),
+(3, 1, 'What is the area of a square with 5cm sides?', '20 cm²', '25 cm²', '30 cm²', '10 cm²', 'B'),
 
--- Thêm câu hỏi mẫu
-INSERT INTO tblQuestions (exam_id, question_text, option_a, option_b, option_c, option_d, correct_option) VALUES
--- Câu hỏi cho kỳ thi Toán học
-(1, N'Kết quả của phép tính 2 + 3 × 4 là gì?', '20', '14', '11', '24', 'B'),
-(1, N'Căn bậc hai của 16 là bao nhiêu?', '2', '4', '6', '8', 'B'),
-(1, N'Diện tích hình vuông có cạnh 5cm là?', '20 cm²', '25 cm²', '30 cm²', '10 cm²', 'B'),
+-- Questions for Physics Exam
+(4, 2, 'What is the SI unit of force?', 'Newton', 'Joule', 'Watt', 'Pascal', 'A'),
+(5, 2, 'What is the speed of light in a vacuum?', '3×10⁶ m/s', '3×10⁸ m/s', '3×10¹⁰ m/s', '3×10⁴ m/s', 'B'),
 
--- Câu hỏi cho kỳ thi Vật lý
-(2, N'Đơn vị đo lực trong hệ SI là gì?', 'Newton', 'Joule', 'Watt', 'Pascal', 'A'),
-(2, N'Vận tốc ánh sáng trong chân không là?', '3×10⁶ m/s', '3×10⁸ m/s', '3×10¹⁰ m/s', '3×10⁴ m/s', 'B'),
+-- Questions for Chemistry Exam
+(6, 3, 'What is the chemical symbol for water?', 'H₂O', 'CO₂', 'NaCl', 'O₂', 'A'),
+(7, 3, 'How many protons does a carbon atom have?', '4', '6', '8', '12', 'B'),
 
--- Câu hỏi cho kỳ thi Hóa học
-(3, N'Ký hiệu hóa học của nước là gì?', 'H₂O', 'CO₂', 'NaCl', 'O₂', 'A'),
-(3, N'Số proton trong nguyên tử carbon là?', '4', '6', '8', '12', 'B'),
+-- Questions for English Quiz
+(8, 4, 'What is the past tense of "go"?', 'goed', 'went', 'gone', 'going', 'B'),
+(9, 4, 'Which word is a noun?', 'quickly', 'beautiful', 'happiness', 'running', 'C');
 
--- Câu hỏi cho Quiz Tiếng Anh
-(4, 'What is the past tense of "go"?', 'goed', 'went', 'gone', 'going', 'B'),
-(4, 'Which word is a noun?', 'quickly', 'beautiful', 'happiness', 'running', 'C');

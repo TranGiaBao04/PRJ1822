@@ -35,9 +35,9 @@ public class UserDAO {
             if(rs.next()){
                 User user = new User();
                 user.setUsername(rs.getString("username"));
-                user.setName(rs.getString("name"));
+                user.setName(rs.getString("Name"));
                 user.setPassword(rs.getString("password"));
-                user.setRole(rs.getString("role"));
+                user.setRole(rs.getString("Role"));
                 return user;
             }
             
@@ -49,7 +49,7 @@ public class UserDAO {
     
     public List<User> getAllUsers(){
         List<User> userlist = new ArrayList<>();
-        String sql = "SELECT username, name, password, role FROM tblUsers ORDER BY username";
+        String sql = "SELECT username, Name, password, Role FROM tblUsers ORDER BY username";
         try{
             Connection conn = DbUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -58,9 +58,9 @@ public class UserDAO {
             while(rs.next()){
                 User us = new User();
                 us.setUsername(rs.getString("username"));
-                us.setName(rs.getString("name"));
+                us.setName(rs.getString("Name"));
                 us.setPassword(rs.getString("password"));
-                us.setRole(rs.getString("role"));
+                us.setRole(rs.getString("Role"));
                 userlist.add(us);
             }
         }catch (Exception e) {

@@ -30,7 +30,7 @@ public class UserController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String url = LOGIN_PAGE;
         try {
-            String action = request.getParameter(url);
+            String action = request.getParameter("action");
             if("login".equals(action)){
                 url = handleLogin(request, response);
             } else if ("logout".equals(action)){

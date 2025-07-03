@@ -26,6 +26,24 @@ public class MainController extends HttpServlet {
                 || "logout".equals(action);
     }
     
+    private boolean isDashboardAction(String action){
+        return "viewCategories".equals(action)
+                || "viewExamsByCategory".equals(action)
+                || "dashboard".equals(action);
+    }
+    
+    private boolean isExamManagementAction(String action){
+        return "showCreateExam".equals(action)
+                || "createExam".equals(action)
+                || "showAddQuestions".equals(action)
+                || "addQuestions".equals(action);
+    }
+    
+    private boolean isTakeExamAction(String action){
+        return "startExam".equals(action)
+                || "submitExam".equals(action);
+    }
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -34,6 +52,12 @@ public class MainController extends HttpServlet {
             String action = request.getParameter("action");
             if(isUserAction(action)){
                 url = "/UserController";
+            }else if(isDashboardAction(action)){
+                url = "/DashboardController";
+            }else if(isExamManagementAction(action)){
+                url = "/ExamManagementController";
+            }else if(isTakeExamAction(action)) {
+                url = "/TakeExamController";
             }
         }catch(Exception e){ 
         }finally{
