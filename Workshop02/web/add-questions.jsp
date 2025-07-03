@@ -4,6 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/styles.css"/>
     <title>Add Questions - Online Exam System</title>
 </head>
 <body>
@@ -11,8 +12,8 @@
         <header>
             <h1>Online Exam System - Add Questions</h1>
             <div>
-                Welcome, ${user.name} (${user.role})
-                <a href="UserController?action=logout">[Logout]</a>
+                Welcome, ${sessionScope.user.name} (${sessionScope.user.role})
+                <a href="UserController?action=logout">Logout</a>
             </div>
         </header>
         
@@ -20,17 +21,17 @@
             <a href="DashboardController">Back to Dashboard</a>
         </nav>
         
-        <c:if test="${not empty message}">
+        <c:if test="${not empty requestScope.message}">
             <div style="color: green; margin: 10px 0;">
-                ${message}
+                ${requestScope.message}
             </div>
         </c:if>
         
         <main>
-            <h2>Add Questions to: ${exam.examTitle}</h2>
-            <p><strong>Subject:</strong> ${exam.subject}</p>
-            <p><strong>Total Marks:</strong> ${exam.totalmarks}</p>
-            <p><strong>Duration:</strong> ${exam.duration} minutes</p>
+            <h2>Add Questions to: ${requestScope.exam.examTitle}</h2>
+            <p><strong>Subject:</strong> ${requestScope.exam.subject}</p>
+            <p><strong>Total Marks:</strong> ${requestScope.exam.totalmarks}</p>
+            <p><strong>Duration:</strong> ${requestScope.exam.duration} minutes</p>
             
             <hr>
             
@@ -38,7 +39,7 @@
             
             <form action="ExamManagementController" method="post">
                 <input type="hidden" name="action" value="addQuestions">
-                <input type="hidden" name="examId" value="${exam.examId}">
+                <input type="hidden" name="examId" value="${requestScope.exam.examId}">
                 
                 <div>
                     <label for="questionText">Question:</label><br>
@@ -86,10 +87,10 @@
             <h3>Existing Questions</h3>
             
             <c:choose>
-                <c:when test="${not empty questions}">
-                    <p><strong>Total Questions:</strong> ${questions.size()}</p>
+                <c:when test="${not empty requestScope.questions}">
+                    <p><strong>Total Questions:</strong> ${requestScope.questions.size()}</p>
                     
-                    <c:forEach var="question" items="${questions}" varStatus="status">
+                    <c:forEach var="question" items="${requestScope.questions}" varStatus="status">
                         <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
                             <h4>Question ${status.index + 1}</h4>
                             <p><strong>Q:</strong> ${question.questiontext}</p>

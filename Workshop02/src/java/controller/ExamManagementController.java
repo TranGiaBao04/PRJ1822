@@ -50,11 +50,11 @@ public class ExamManagementController extends HttpServlet {
                 String action = request.getParameter("action");
                 if ("showCreateExam".equals(action)) {
                     url = handleShowCreateExam(request, response);
-                } else if ("createExam".equals(request)) {
+                } else if ("createExam".equals(action)) {
                     url = handleCreateExam(request, response);
-                } else if ("showAddQuestions".equals(request)) {
+                } else if ("showAddQuestions".equals(action)) {
                     url = handleShowAddQuestions(request, response);
-                } else if ("addQuestions".equals(request)) {
+                } else if ("addQuestions".equals(action)) {
                     url = handleAddQuestions(request, response);
                 } else {
                     url = DASHBOARD_PAGE;
@@ -192,7 +192,7 @@ public class ExamManagementController extends HttpServlet {
 
             int examId = Integer.parseInt(examIdStr);
 
-            // Load exam details
+            // Load chi tiết exam
             ExamDAO examDAO = new ExamDAO();
             Exam exam = examDAO.detail(examId);
 
@@ -201,7 +201,7 @@ public class ExamManagementController extends HttpServlet {
                 return DASHBOARD_PAGE;
             }
 
-            // Load existing questions
+            // Load questions
             QuestionDAO questionDAO = new QuestionDAO();
             List<Questions> questions = questionDAO.getQuestion(examId);
 
@@ -244,13 +244,13 @@ public class ExamManagementController extends HttpServlet {
 
             int examId = Integer.parseInt(examIdStr);
 
-            // Validate correct option
+            // Validate option đúng
             if (!correctOption.matches("[ABCD]")) {
                 request.setAttribute("message", "Correct option must be A, B, C, or D!");
                 return handleShowAddQuestions(request, response);
             }
 
-            // Create question object
+            // Tạo question object
             Questions question = new Questions();
             question.setExamId(examId);
             question.setQuestiontext(questionText.trim());
@@ -260,7 +260,7 @@ public class ExamManagementController extends HttpServlet {
             question.setOption_d(optionD.trim());
             question.setCorrect_option(correctOption.trim());
 
-            // Save question
+            // Lưu question
             QuestionDAO questionDAO = new QuestionDAO();
             boolean added = questionDAO.addQuestion(question);
 

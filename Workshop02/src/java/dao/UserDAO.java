@@ -44,7 +44,7 @@ public class UserDAO {
         } catch (Exception e) {
             System.out.println("Login error:" +e.getMessage());
         }        
-        return us;
+        return null;
     }
     
     public List<User> getAllUsers(){

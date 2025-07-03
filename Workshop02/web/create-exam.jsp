@@ -4,6 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/styles.css"/>
     <title>Create Exam - Online Exam System</title>
 </head>
 <body>
@@ -11,8 +12,8 @@
         <header>
             <h1>Online Exam System - Create Exam</h1>
             <div>
-                Welcome, ${user.name} (${user.role})
-                <a href="UserController?action=logout">[Logout]</a>
+                Welcome, ${sessionScope.user.name} (${sessionScope.user.role})
+                <a href="UserController?action=logout">Logout</a>
             </div>
         </header>
         
@@ -20,9 +21,9 @@
             <a href="DashboardController">Back to Dashboard</a>
         </nav>
         
-        <c:if test="${not empty message}">
+        <c:if test="${not empty requestScope.message}">
             <div style="color: red; margin: 10px 0;">
-                ${message}
+                ${requestScope.message}
             </div>
         </c:if>
         
@@ -46,7 +47,7 @@
                     <label for="categoryId">Category:</label><br>
                     <select id="categoryId" name="categoryId" required>
                         <option value="">Select a category</option>
-                        <c:forEach var="category" items="${categories}">
+                        <c:forEach var="category" items="${requestScope.categories}">
                             <option value="${category.categoryId}">${category.categoryName}</option>
                         </c:forEach>
                     </select>

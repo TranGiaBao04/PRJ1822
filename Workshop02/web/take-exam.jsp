@@ -4,41 +4,31 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/styles.css"/>
     <title>Taking Exam - Online Exam System</title>
     <script>
-        // Timer functionality
-        let timeLeft = ${exam.duration} * 60; // Convert minutes to seconds
-        
+        let startTimeMillis = ${examStartTime};
+        let durationMinutes = ${requestScope.exam.duration};
+
         function updateTimer() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            document.getElementById('timer').innerHTML = 
-                `Time Remaining: ${minutes}:${seconds.toString().padStart(2, '0')}`;
-            
-            if (timeLeft <= 0) {
-                alert('Time is up! Submitting exam...');
-                document.getElementById('examForm').submit();
-                return;
+            let now = new Date().getTime();
+            let elapsedMillis = now - startTimeMillis;// thời gian trôi qua
+            let remainingMillis = (durationMinutes * 60 * 1000) - elapsedMillis;//thời gian còn lại
+
+            if (remainingMillis <= 0) {
+                    document.getElementById("timer").innerHTML = "Time expired!";
+                    document.getElementById("examForm").submit();
+            } else {
+                    let minutes = Math.floor(remainingMillis / (1000 * 60));// tính số phút còn lại
+                    let seconds = Math.floor((remainingMillis % (1000 * 60)) / 1000);// tính số giây còn lại
+                    document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s";
+                }
             }
-            
-            timeLeft--;
-        }
-        
-        function startTimer() {
-            updateTimer();
+
             setInterval(updateTimer, 1000);
-        }
-        
         function confirmSubmit() {
             return confirm('Are you sure you want to submit your exam? This action cannot be undone.');
-        }
-        
-        window.onload = startTimer;
-        
-        // Prevent page refresh/back
-        window.onbeforeunload = function() {
-            return "Are you sure you want to leave? Your exam progress will be lost.";
-        };
+        }   
     </script>
 </head>
 <body>
@@ -46,25 +36,28 @@
         <header>
             <h1>Online Exam System</h1>
             <div>
-                Student: ${user.name}
-                <span id="timer" style="font-weight: bold; color: red;"></span>
+                Student: ${sessionScope.user.name}
             </div>
         </header>
         
         <main>
-            <h2>${exam.examTitle}</h2>
-            <p><strong>Subject:</strong> ${exam.subject}</p>
-            <p><strong>Total Marks:</strong> ${exam.totalmarks}</p>
-            <p><strong>Duration:</strong> ${exam.duration} minutes</p>
-            <p><strong>Total Questions:</strong> ${questions.size()}</p>
+            <h2>Taking Exam: ${requestScope.exam.examTitle}</h2>
+            <p><strong>Time Remaining:</strong> <span id="timer"></span></p>
+            <div style="background-color: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px;">
+                <p><strong>Subject:</strong> ${requestScope.exam.subject}</p>
+                <p><strong>Total Marks:</strong> ${requestScope.exam.totalmarks}</p>
+                <p><strong>Duration:</strong> ${requestScope.exam.duration} minutes</p>
+                <p><strong>Total Questions:</strong> ${requestScope.questions.size()}</p>
+                <p style="color: red;"><strong>Instructions:</strong> Select one answer for each question. Click Submit when finished.</p>
+            </div>
             
             <hr>
             
             <form id="examForm" action="TakeExamController" method="post" onsubmit="return confirmSubmit()">
                 <input type="hidden" name="action" value="submitExam">
-                <input type="hidden" name="examId" value="${exam.examId}">
+                <input type="hidden" name="examId" value="${requestScope.exam.examId}">
                 
-                <c:forEach var="question" items="${questions}" varStatus="status">
+                <c:forEach var="question" items="${requestScope.questions}" varStatus="status">
                     <div style="border: 1px solid #ccc; margin: 15px 0; padding: 15px;">
                         <h3>Question ${status.index + 1}</h3>
                         <p>${question.questiontext}</p>

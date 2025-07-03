@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import model.User;
 import utils.PasswordUtils;
 
@@ -24,23 +25,23 @@ import utils.PasswordUtils;
 public class UserController extends HttpServlet {
 
     private static final String LOGIN_PAGE = "login.jsp";
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = LOGIN_PAGE;
         try {
             String action = request.getParameter("action");
-            if("login".equals(action)){
+            if ("login".equals(action)) {
                 url = handleLogin(request, response);
-            } else if ("logout".equals(action)){
+            } else if ("logout".equals(action)) {
                 url = handleLogout(request, response);
-            } 
-        }catch (Exception e) {
+            }
+        } catch (Exception e) {
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -113,7 +114,7 @@ public class UserController extends HttpServlet {
 
     private String handleLogout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
-        if(session != null){
+        if (session != null) {
             session.invalidate();
         }
         return LOGIN_PAGE;

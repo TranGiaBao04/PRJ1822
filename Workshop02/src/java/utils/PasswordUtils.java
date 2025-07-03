@@ -16,29 +16,30 @@ import model.User;
  * @author Admin
  */
 public class PasswordUtils {
-    public static String encryptSHA256(String password){
-        if(password == null || password.isEmpty()){
+
+    public static String encryptSHA256(String password) {
+        if (password == null || password.isEmpty()) {
             return null;
         }
-        try{
+        try {
             // tao MessageDigest instance cho SHA-256
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            
+
             //chuyen doi password thanh byte array va hash
             byte[] hashBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
-            
+
             //chuyen doi byte array thanh hex string
             StringBuilder hexString = new StringBuilder();
-            for(byte hashByte : hashBytes){
+            for (byte hashByte : hashBytes) {
                 String hex = Integer.toHexString(0xff & hashByte);
-                if(hex.length() == 1){
+                if (hex.length() == 1) {
                     hexString.append('0');
                 }
                 hexString.append(hex);
             }
             return hexString.toString();
-            
-        }catch (NoSuchAlgorithmException e) {
+
+        } catch (NoSuchAlgorithmException e) {
             System.err.println("SHA-256 algorithm not available: " + e.getMessage());
             return null;
         } catch (Exception e) {
@@ -46,11 +47,11 @@ public class PasswordUtils {
             return null;
         }
     }
-    
+
     public static void main(String[] args) {
         UserDAO udao = new UserDAO();
         List<User> list = udao.getAllUsers();
-        for(User u : list){
+        for (User u : list) {
             udao.updatePassword(u.getUsername(), encryptSHA256(u.getPassword()));
         }
     }

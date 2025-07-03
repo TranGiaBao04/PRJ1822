@@ -60,6 +60,7 @@ public class MainController extends HttpServlet {
                 url = "/TakeExamController";
             }
         }catch(Exception e){ 
+            e.printStackTrace();
         }finally{
             request.getRequestDispatcher(url).forward(request, response);
         }
