@@ -146,20 +146,15 @@ public class ExamManagementController extends HttpServlet {
                 request.setAttribute("message", "Please fill in all required fields!");
                 return handleShowCreateExam(request, response);
             }
-
+            
             int categoryId = Integer.parseInt(categoryIdStr);
             int totalMarks = Integer.parseInt(totalMarksStr);
             int duration = Integer.parseInt(durationStr);
 
-            // Tạo exam 
-            Exam exam = new Exam();
-            exam.setExamTitle(examTitle.trim());
-            exam.setSubject(subject.trim());
-            exam.setCategoryId(categoryId);
-            exam.setTotalmarks(totalMarks);
-            exam.setDuration(duration);
+
 
             ExamDAO examDAO = new ExamDAO();
+            Exam exam = new Exam(examDAO.ExamId(), examTitle, subject, categoryId, totalMarks, duration);
             boolean created = examDAO.create(exam);
 
             // lưu exam
@@ -244,24 +239,15 @@ public class ExamManagementController extends HttpServlet {
 
             int examId = Integer.parseInt(examIdStr);
 
-            // Validate option đúng
+            // Validate option 
             if (!correctOption.matches("[ABCD]")) {
                 request.setAttribute("message", "Correct option must be A, B, C, or D!");
                 return handleShowAddQuestions(request, response);
             }
 
-            // Tạo question object
-            Questions question = new Questions();
-            question.setExamId(examId);
-            question.setQuestiontext(questionText.trim());
-            question.setOption_a(optionA.trim());
-            question.setOption_b(optionB.trim());
-            question.setOption_c(optionC.trim());
-            question.setOption_d(optionD.trim());
-            question.setCorrect_option(correctOption.trim());
-
             // Lưu question
             QuestionDAO questionDAO = new QuestionDAO();
+            Questions question = new Questions(questionDAO.QuestionId(), examId, questionText, optionA, optionB, optionC, optionD, correctOption);
             boolean added = questionDAO.addQuestion(question);
 
             if (added) {

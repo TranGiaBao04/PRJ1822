@@ -13,7 +13,7 @@
             <h1>Online Exam System - Create Exam</h1>
             <div>
                 Welcome, ${sessionScope.user.name} (${sessionScope.user.role})
-                <a href="UserController?action=logout">Logout</a>
+                <a href="MainController?action=logout">Logout</a>
             </div>
         </header>
         
@@ -30,7 +30,7 @@
         <main>
             <h2>Create New Exam</h2>
             
-            <form action="ExamManagementController" method="post">
+            <form action="MainController" method="post">
                 <input type="hidden" name="action" value="createExam">
                 
                 <div>

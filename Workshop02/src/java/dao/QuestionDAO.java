@@ -7,6 +7,7 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Questions;
@@ -20,6 +21,7 @@ public class QuestionDAO {
 
     private static final String ADD_QUESTION = "INSERT INTO tblQuestions (question_id, exam_id, question_text, option_a, option_b, option_c, option_d, correct_option) VALUES(?,?,?,?,?,?,?,?)";
     private static final String GET_QUESTION = "SELECT * FROM tblQuestions WHERE exam_id = ?";
+    private static final String QUESTION_ID = "SELECT MAX(question_id) AS maxId FROM tblQuestions";
 
     public boolean addQuestion(Questions question) {
         boolean success = false;
@@ -79,6 +81,28 @@ public class QuestionDAO {
         }
 
         return ques;
+    }
+
+    public int QuestionId(){
+        int examId = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DbUtils.getConnection();
+            ps = conn.prepareStatement(QUESTION_ID);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                examId = rs.getInt("maxId") + 1;
+            }
+        } catch (Exception e) {
+            System.err.println("Error in quessions Id(): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, ps, rs);
+        }
+
+        return examId;
     }
 
     private void closeResources(Connection conn, PreparedStatement ps, ResultSet rs) {

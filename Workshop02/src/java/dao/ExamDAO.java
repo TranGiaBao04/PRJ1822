@@ -23,6 +23,7 @@ public class ExamDAO {
     public static final String UPDATE_EXAM = "UPDATE tblExams SET exam_title = ?, Subject = ?, category_id = ?, total_marks = ?, Duration = ? WHERE exam_id = ? ";
     public static final String DETAIL_EXAM = "SELECT * FROM tblExams WHERE exam_id = ?";
     public static final String DELETE_EXAM = "DELETE FROM tblExams WHERE exam_id= ?";
+    public static final String EXAM_ID = "SELECT MAX(exam_id) AS maxId FROM tblExams";
 
     public List<Exam> readAll(int categoryId) {
         List<Exam> exam = new ArrayList<>();
@@ -159,7 +160,29 @@ public class ExamDAO {
         }
         return success;
     }
+    
+    public int ExamId(){
+        int examId = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DbUtils.getConnection();
+            ps = conn.prepareStatement(EXAM_ID);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                examId = rs.getInt("maxId") + 1;
+            }
+        } catch (Exception e) {
+            System.err.println("Error in quessions Id(): " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, ps, rs);
+        }
 
+        return examId;
+    }
+    
     private void closeResources(Connection conn, PreparedStatement ps, ResultSet rs) {
         try {
             if (rs != null) {

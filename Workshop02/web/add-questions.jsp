@@ -13,7 +13,7 @@
             <h1>Online Exam System - Add Questions</h1>
             <div>
                 Welcome, ${sessionScope.user.name} (${sessionScope.user.role})
-                <a href="UserController?action=logout">Logout</a>
+                <a href="MainController?action=logout">Logout</a>
             </div>
         </header>
         
